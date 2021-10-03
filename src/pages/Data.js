@@ -1,10 +1,18 @@
-import React from 'react';
+import React, {useEffect} from 'react';
 import {View, Text} from 'react-native';
 
-const Data = () => {
+const Data = ({route, navigation}) => {
+  const {coordinate} = route.params;
+
+  useEffect(() => {
+    console.log(coordinate);
+  }, []);
   return (
     <View>
-      <Text>Hola</Text>
+      <Text>
+        {coordinate.latitude + '\n'}
+        {coordinate.longitude}
+      </Text>
     </View>
   );
 };
