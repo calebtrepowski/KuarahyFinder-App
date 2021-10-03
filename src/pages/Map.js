@@ -10,18 +10,16 @@ import {getGlobalPosition} from '../utils/location';
 const Map = ({navigation}) => {
   const [coordinate, setCoordinate] = useState({latitude: 0, longitude: 0});
 
-  const showToast = message => {
-    ToastAndroid.show(`Error: ${message}`, ToastAndroid.LONG);
-  };
-
   const getLocation = async () => {
     try {
       location = await getGlobalPosition();
-      console.log(location);
+      // console.log(location);
       setCoordinate(location);
     } catch (error) {
       if (error.name === 'LocationError') {
-        showToast(`${error.message}. Try turning on Location`);
+        ToastAndroid.show(`Error: ${error.message}`, ToastAndroid.LONG);
+      } else {
+        navigation.navigate('Error', {error: error});
       }
     }
   };
@@ -34,6 +32,8 @@ const Map = ({navigation}) => {
     <>
       <View style={styles.container}>
         <MapView
+          showsUserLocation
+          followsUserLocation
           style={styles.map}
           initialRegion={{
             latitude: coordinate.latitude,
@@ -41,19 +41,13 @@ const Map = ({navigation}) => {
             latitudeDelta: 0.015,
             longitudeDelta: 0.0121,
           }}
-          showsCompass={true}
           loadingEnabled={true}
           rotateEnabled
-          animate>
-          {/* <Marker coordinate={{latitude: -25.3047407, longitude: -57.5794518}} /> */}
-          <Marker
-            draggable
-            coordinate={coordinate}
-            onDragEnd={e => {
-              setCoordinate({...e.nativeEvent.coordinate});
-              console.log(coordinate);
-            }}
-          />
+          animate
+          onPress={c => {
+            setCoordinate({...c.nativeEvent.coordinate});
+          }}>
+          <Marker coordinate={coordinate} />
         </MapView>
       </View>
       <FAB
@@ -69,9 +63,8 @@ const Map = ({navigation}) => {
 const styles = StyleSheet.create({
   container: {
     ...StyleSheet.absoluteFillObject,
-    height: '100%',
-    width: '100%',
-    justifyContent: 'flex-end',
+    flex: 1,
+    justifyContent: 'center',
     alignItems: 'center',
   },
   map: {

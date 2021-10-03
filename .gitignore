@@ -60,3 +60,4 @@ buck-out/
 /ios/Pods/
 
 android/app/src/main/res/mipmap-*
+src/utils/test.json
