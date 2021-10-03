@@ -2,9 +2,16 @@ import React, {useEffect, useState} from 'react';
 import {View, Text, Pressable} from 'react-native';
 
 import DatePicker from 'react-native-date-picker';
-import {calculateWeeklyAverage} from '../utils/calculations';
+import Chart from '../components/Chart';
+import {calculateWeeklyAverage} from '../utils/WeeklyAverage';
 
-import {dateToString, fillUrl, getDates, stringToDate} from '../utils/request';
+import {
+  dateToString,
+  fillUrl,
+  getDateFromDayNum,
+  getDates,
+  stringToDate,
+} from '../utils/request';
 
 const Data = ({route, navigation}) => {
   const yearQtty = 0;
@@ -14,6 +21,9 @@ const Data = ({route, navigation}) => {
   const [openDateStart, setOpenDateStart] = useState(false);
   const [openDateEnd, setOpenDateEnd] = useState(false);
 
+  const [yAxis, setYAxis] = useState([]);
+  const [xAxis, setXAxis] = useState([]);
+
   const getData = async coord => {
     const response = await fetch(
       fillUrl({
@@ -22,24 +32,29 @@ const Data = ({route, navigation}) => {
       }),
     );
     const jsonData = await response.json();
-    console.log(
-      calculateWeeklyAverage(
-        jsonData.properties.parameter.ALLSKY_SFC_SW_DWN,
-        yearQtty,
-      ),
+    let yaxis = calculateWeeklyAverage(
+      jsonData.properties.parameter.ALLSKY_SFC_SW_DWN,
+      yearQtty,
     );
+    setYAxis(yaxis);
   };
 
-  // useEffect(() => {
-  //   console.log(dateStart);
-  //   console.log(dateEnd);
-  // });
+  useEffect(() => {
+    let X = [];
+    // console.log(yAxis);
+    for (let i = 1; i <= yAxis.length; i++) {
+      let date = getDateFromDayNum(7 * (i - 1) + 1);
+      X.push(`${date.getMonth() + 1}/${date.getDate()}`);
+    }
+    setXAxis(X);
+    //date format: MM/DD
+  }, [dateStart, dateEnd, yAxis]);
 
   useEffect(() => {
     getData(coordinate);
   }, [dateStart, dateEnd]);
   return (
-    <View>
+    <View style={{flex: 1, alignItems: 'center', justifyContent: 'center'}}>
       <Pressable
         onPress={() => {
           setOpenDateStart(true);
@@ -80,10 +95,8 @@ const Data = ({route, navigation}) => {
         }}
         maximumDate={new Date()}
       />
-      <Text>
-        {coordinate.latitude + '\n'}
-        {coordinate.longitude}
-      </Text>
+      {/* {yAxis === [] && xAxis === [] &&  />} */}
+      <Chart yAxis={yAxis} xAxis={xAxis} />
     </View>
   );
 };

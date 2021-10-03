@@ -27,12 +27,15 @@ export const calculateWeeklyAverage = (data, yearQtty) => {
       }
     }
     mean /= counter;
-    y.push(mean);
+    if (counter !== 0) {
+      y.push(mean);
+    }
     // console.log(y);
-    console.log(JSON.stringify(y, null, 2));
-    console.log(y.length);
+    // console.log(JSON.stringify(y, null, 2));
+    // console.log(y.length);
   }
   //   return [x, y];
+  return y;
 
   //   data.map();
 };
