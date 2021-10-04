@@ -21,6 +21,9 @@ export const container = StyleSheet.create({
     justifyContent: 'space-around',
     marginBottom: 4,
   },
+  description: {
+    fontWeight: '200',
+  },
   title: {
     marginTop: 0,
     marginBottom: 0,
@@ -28,8 +31,5 @@ export const container = StyleSheet.create({
     backgroundColor: '#F5F5F5',
     fontWeight: 'normal',
     textAlign: 'left',
-  },
-  description: {
-    fontWeight: '200',
   },
 });
